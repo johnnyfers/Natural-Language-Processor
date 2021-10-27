@@ -3,8 +3,9 @@ from nltk.corpus import conll2000
 from nltk.stem import RSLPStemmer
 
 class Main:
-    def __init__(self):
+    def __init__(self, text):
         self.LANGUAGE = 'english'
+        self.text = text
         self.stopwords = set(corpus.stopwords.words(self.LANGUAGE))
         self.classifications = []
 
@@ -14,10 +15,10 @@ class Main:
 
             self.classifications.append((word.lower(), classification))
 
-    def main(self, text):
+    def run(self):
         print('getting tokens: ')
 
-        tokens = self.get_token(self, text)
+        tokens = self.get_token(self)
         self.print_tokens(tokens)
 
         self.grammar_tag(self,tokens)
@@ -30,8 +31,8 @@ class Main:
         self.stematize(tokens)
     
     @staticmethod
-    def get_token(self, text):
-        tokens = word_tokenize(text, self.LANGUAGE)
+    def get_token(self):
+        tokens = word_tokenize(self.text, self.LANGUAGE)
 
         return tokens
 
@@ -65,8 +66,9 @@ class Main:
 
         for token in tokens:
             print(stemmer.stem(token))
-        
-start = Main()
+            
 text = 'Hollywood is bleeding, vampires feeding Darkness turns to dust'
 
-start.main(text)
+start = Main(text)
+
+start.run()
