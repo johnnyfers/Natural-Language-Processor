@@ -2,77 +2,71 @@ from nltk import word_tokenize, corpus
 from nltk.corpus import conll2000
 from nltk.stem import RSLPStemmer
 
-LANGUAGE = 'english'
+class Main:
+    def __init__(self):
+        self.LANGUAGE = 'english'
+        self.stopwords = set(corpus.stopwords.words(self.LANGUAGE))
+        self.classifications = []
 
-def init():
-    global stopwords
-    global classifications
+        for(word, classification) in conll2000.tagged_words():
+            if '+' in classification:
+                self.classification = classification[classification.index('+') + 1:]
 
-    stopwords = set(corpus.stopwords.words(LANGUAGE))
-    classifications = []
+            self.classifications.append((word.lower(), classification))
 
-    for(word, classification) in conll2000.tagged_words():
-        if '+' in classification:
-            classification = classification[classification.index('+') + 1:]
+    def main(self, text):
+        print('getting tokens: ')
 
-        classifications.append((word.lower(), classification))
+        tokens = self.get_token(self, text)
+        self.print_tokens(tokens)
 
+        self.grammar_tag(self,tokens)
 
-def get_token(text):
-    tokens = word_tokenize(text, LANGUAGE)
+        print('removing stopwords: ')
 
-    return tokens
+        tokens = self.remove_stopwords(self, tokens)
+        self.print_tokens(tokens)
 
-def print_tokens(tokens):
-    for token in tokens:
-        print(token)
-
-
-def remove_stopwords(tokens):
-    global stopwords
+        self.stematize(tokens)
     
-    filtered_tokens = []
-    
-    for token in tokens:
-        if token not in stopwords:
-            filtered_tokens.append(token)
-    
-    return filtered_tokens
+    @staticmethod
+    def get_token(self, text):
+        tokens = word_tokenize(text, self.LANGUAGE)
 
+        return tokens
 
-def grammar_tag(tokens):
-    global classifications
-    
-    for token in tokens:
-        for (word, classification) in classifications:
-            if token == word:
-                print('token ' + token + ' = ', classification)
-                
-                break
-                
+    @staticmethod
+    def print_tokens(tokens):
+        for token in tokens:
+            print(token)
 
+    @staticmethod
+    def remove_stopwords(self, tokens):
+        filtered_tokens = []
 
-def stematize(tokens):
-    stemmer = RSLPStemmer()
+        for token in tokens:
+            if token not in self.stopwords:
+                filtered_tokens.append(token)
 
-    for token in tokens:
-        print(stemmer.stem(token))
+        return filtered_tokens
 
-if __name__ == '__main__':
-    init()
+    @staticmethod
+    def grammar_tag(self, tokens):
+        for token in tokens:
+            for (word, classification) in self.classifications:
+                if token == word:
+                    print('token ' + token + ' = ', classification)
 
-    text = 'Hollywood is bleeding, vampires feeding Darkness turns to dust' # post malone
-    
-    print('getting tokens: ')
-    
-    tokens = get_token(text)
-    print_tokens(tokens)
-    
-    grammar_tag(tokens)
+                    break
 
-    print('removing stopwords: ')
-    
-    tokens = remove_stopwords(tokens)
-    print_tokens(tokens)
-    
-    stematize(tokens)
+    @staticmethod
+    def stematize(tokens):
+        stemmer = RSLPStemmer()
+
+        for token in tokens:
+            print(stemmer.stem(token))
+        
+start = Main()
+text = 'Hollywood is bleeding, vampires feeding Darkness turns to dust'
+
+start.main(text)
